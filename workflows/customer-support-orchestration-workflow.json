@@ -1,0 +1,437 @@
+{
+  "name": "AI Customer Support Orchestration Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1dd5c1b4-0480-4e58-bedf-826641ae41df",
+              "name": "response",
+              "value": "Your refund request has been received",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -96
+      ],
+      "id": "e3bfe8f5-f1dc-4767-9749-bfe632594b55",
+      "name": "Refund Response"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "customer-query",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fa190fc7-f1d5-4896-8bac-8e2682046d5e",
+      "name": "Webhook",
+      "webhookId": "4accb3cc-c3cc-49e1-8559-be72a9a48ea0"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a20a72fa-ddc4-4c5f-8d72-2bd5aab12ccd",
+              "name": "message",
+              "value": "={{$json.body.message}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "08ca8fdd-544d-43c8-8a27-41332063bca0",
+      "name": "Set Message"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2b7c697-decd-4e39-968a-deb69d05bcc0",
+              "name": "category",
+              "value": "={{$json[\"choices\"][0][\"message\"][\"content\"].trim().toLowerCase()}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "30654f34-ee86-4713-b8e8-d735632a731f",
+      "name": "Set Category"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "30dfab07-bc25-47c1-b49f-05f4817a8b67",
+              "leftValue": "={{$json[\"category\"]}}",
+              "rightValue": "refund",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ true }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        0
+      ],
+      "id": "c9075c04-38da-48f7-88a3-242d813aec81",
+      "name": "Refund?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b740d602-5922-4da8-8876-77786c0f0410",
+              "name": "response",
+              "value": "Your complaint has been logged and will be reviewed within 24 hours.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "7e4c6053-9baa-4fc9-bbf2-b27cf78014d0",
+      "name": "Complaint Response"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5bf8e9d6-4af8-4e20-abed-1434b3881963",
+              "leftValue": "={{$json[\"category\"]}}",
+              "rightValue": "complaint",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ true }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1040,
+        96
+      ],
+      "id": "2fd8b2ac-9466-4768-87d7-d8f63cfac87a",
+      "name": "Complaint?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "77db2c4a-e2d4-4bb1-8a37-94de917c5d1c",
+              "name": "response",
+              "value": "Our technical team has been notified and will be in touch shortly.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1456,
+        96
+      ],
+      "id": "186fd434-a3a0-40e3-9665-faa4711b4802",
+      "name": "Technical Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "91877b8e-cd8f-456d-8125-6aed5805767a",
+              "name": "response",
+              "value": "Your request has been received and forwarded to our support team.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1456,
+        288
+      ],
+      "id": "da86bd3e-c21c-45bb-8c2b-564f2e934981",
+      "name": "General Response"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2ae07ec3-4dff-41c0-8f21-8af6177e668e",
+              "leftValue": "={{$json[\"category\"]}}",
+              "rightValue": "technical",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ true }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        192
+      ],
+      "id": "02c70f33-7bae-4ab8-a0dc-c888f3ccc14b",
+      "name": "Technical?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "080e9269-0c09-4bd1-b2aa-32e2cffe2b6e",
+              "name": "response",
+              "value": "We're experiencing a technical issue. Please try again in a moment.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        288
+      ],
+      "id": "42c5b632-2749-4c2a-867c-1efa5767f646",
+      "name": "Fallback Response"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_OPENAI_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-3.5-turbo\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You must classify the message into exactly one of these categories: refund, complaint, technical, general. Return only one word.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{$json.message}}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "6d7fbe97-9d23-4937-975f-5fc2f17b06bd",
+      "name": "Classify with OpenAI",
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Message": {
+      "main": [
+        [
+          {
+            "node": "Classify with OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Category": {
+      "main": [
+        [
+          {
+            "node": "Refund?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refund?": {
+      "main": [
+        [
+          {
+            "node": "Refund Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Complaint?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complaint?": {
+      "main": [
+        [
+          {
+            "node": "Complaint Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Technical?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Technical?": {
+      "main": [
+        [
+          {
+            "node": "Technical Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "General Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify with OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Set Category",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fallback Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e7413c27-9b4c-4bf1-ae79-62e45ba09501",
+  "meta": {
+    "instanceId": "827cf5f493a0ff6148a1fd138ac02252a6c7eb16041d423cd2136026b0923e53"
+  },
+  "id": "E8jpMEwJjZcHeqo8",
+  "tags": []
+}
